@@ -77,14 +77,12 @@ const useController = {
     },
 
     login: async (req,res)=>{
-        let {email,senha} = req.body;
-
-        senha = senha.toString();
-
+        let {email, senha} = req.body;
+    
         try{
             const sql = await clientController.validadeLogin(email, senha);
-
-            if(sql.length > 0){
+    
+            if(sql.length > 0 && sql[0].email === email.toLowerCase() && sql[0].senha === senha){ // Compara o e-mail sem conversão para minúsculas
                 res.status(200).json({msg:"Email e senha validados com sucesso!!!"});
             }
             else{
