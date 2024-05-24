@@ -9,4 +9,8 @@ router.post("/api/create", clientController.createNewUser); //Cadastrar novo usu
 router.post("/api/registerNewClient", clientController.registerNewClient);//Cadastrar o usuario
 router.post("/api/validade", clientController.login);//Validar o login
 
+router.post('/api/reset', clientController.getEmailReset)
+router.post('/api/resetpassword', clientController.ResetSenha)
+
+
 module.exports = router;

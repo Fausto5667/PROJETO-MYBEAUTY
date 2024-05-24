@@ -21,7 +21,7 @@ const useModel = {
         .catch(erro => console.log(erro));
         return result;
     },
-    validadeLogin: async(email, senha)=>{
+    validateLogin: async(email, senha)=>{
         const [result] = await connection.query("SELECT * FROM cliente WHERE email=? AND senha=?", [email, senha])
         .catch(erro => console.log(erro));
         return result;
@@ -30,7 +30,19 @@ const useModel = {
         const [result] = await connection.query("INSERT INTO cliente values(?,?,?,?,?)",[id,nome,sobrenome,email,senha])
         .catch(erro => console.log(erro));
         return result;
-    }
+    },
+
+    //RESET SENHA
+    getByEmailClients : async(email)=>{
+        const [result] = await connection.query("SELECT * FROM cliente WHERE email=?",[email])
+        .catch(erro => console.log(erro));
+        return result;
+    },
+    updateSenha: async(email,senha)=>{
+        const [result] = await connection.query("UPDATE cliente SET email=?, senha=? ", [email,senha])
+        .catch(erro => console.log(erro));
+        return result;
+    },
 };
 
 module.exports = useModel;

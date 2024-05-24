@@ -39,23 +39,28 @@ const useController = {
     //Criar usuario
     createNewUser: async(req,res)=>{
         const {id,nome,email,endereco,senha} = req.body;
-
+    
         try{
-            const sql = await clientController.getByID(id)
-
+            // Verifica se o e-mail contém o caractere "@"
+            if (!email.includes('@')){
+                return res.status(400).json({msg: "O e-mail fornecido é inválido. (@)"});
+            }
+    
+            const sql = await clientController.getByID(id);
+    
             if(sql.length > 0){
-                res.status(401).json({msg: "O ID ja esta cadastrado no DB"})
+                res.status(401).json({msg: "O ID já está cadastrado no DB"});
             }
             else{
                 await clientController.registerUser(id,nome,email,endereco,senha);
-                res.status(201).json({msg: "Usuario cadastrado com sucesso"})
+                res.status(201).json({msg: "Usuário cadastrado com sucesso"});
             }
         }
         catch(error){
-            return error
+            return res.status(500).json(error);
         }
     },
-
+ 
     registerNewClient: async(req,res)=>{
         const {id, nome, sobrenome, email, senha} = req.body;
 
@@ -80,8 +85,8 @@ const useController = {
         let {email, senha} = req.body;
     
         try{
-            const sql = await clientController.validadeLogin(email, senha);
-    
+            const sql = await clientController.validateLogin(email, senha);
+            
             if(sql.length > 0 && sql[0].email === email.toLowerCase() && sql[0].senha === senha){ // Compara o e-mail sem conversão para minúsculas
                 res.status(200).json({msg:"Email e senha validados com sucesso!!!"});
             }
@@ -94,7 +99,48 @@ const useController = {
                 res.status(500).json(error);
             }
         }
-    }
+    },
+
+    ResetSenha: async (req, res) => {
+        let { email, senha } = req.body
+
+        console.log(req.body);
+
+        email = email.toLowerCase();
+
+        try {
+            const sql = await clientController.updateSenha(email, senha);
+            res.status(200).json({ msg: "senha atualizada com sucesso" });
+        }
+
+        catch (error) {
+            console.log("Erro ao redefinir a senha")
+            res.status(500).json({ msg: "Erro no servidor" })
+        }
+    },
+
+    getEmailReset: async (req, res) => {
+        let { email } = req.body
+
+        console.log(req.body)
+        email = email.toLowerCase();
+
+        try {
+            const sql = await clientController.getByEmailClients(email);
+
+            if (sql.length > 0) {
+                res.status(200).json({ msg: "sucesso" })
+            }
+            else {
+                res.status(401).json({ msg: "o email nao esta cadastrado no bd" });
+            }
+        }
+        catch (error) {
+            if (error) {
+                res.status(500).json(error)
+            }
+        }
+    },
 };
 
 module.exports = useController;
